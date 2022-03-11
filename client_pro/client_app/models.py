@@ -1,7 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class Tutorial(models.Model):
-    title = models.CharField(max_length=70, blank=False, default='')
-    description = models.CharField(max_length=200,blank=False, default='')
-    published = models.BooleanField(default=False)
-# Create your models here.
+
+class userDetails(models.Model):
+    roles = models.CharField(max_length=70, default='')
+    deleted = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
