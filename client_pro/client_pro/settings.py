@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'client_app'
 
 ]
@@ -95,7 +96,14 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
-    
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'test_db',
+    #     'USER': 'root',
+    #     'PASSWORD': 'root123',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '3306',
+    # }
 }
 
 
