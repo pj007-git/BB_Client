@@ -1,8 +1,17 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import redirect, render, HttpResponse
+from .models import userDetails
+from flask import request as req
 
 # Create your views here.
-def index(self):
-    return HttpResponse("I am in.")
+def index(req):
+    # return HttpResponse("s")
+    if req.method == 'POST':
+        username = req.POST['username']
+        password = req.POST['password']
+        print(username,password + " is Registered")
+        return redirect('/client/index')
+    else:
+        return render(req, 'Regist.html')
 
 # from django.shortcuts import render,HttpResponse,redirect
 # from rest_framework import viewsets
