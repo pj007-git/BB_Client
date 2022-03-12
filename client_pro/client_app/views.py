@@ -1,54 +1,67 @@
-from django.shortcuts import redirect, render, HttpResponse
+from django.shortcuts import render,HttpResponse,redirect
+from django.contrib import auth
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import userDetails
-from flask import request as req
 
 # Create your views here.
-def index(req):
-    # return HttpResponse("s")
+def clientAdmin(req):
+    return render(req, 'admin.html')
+
+def adminHome(req):
     if req.method == 'POST':
+        adminName = req.POST['admin-name']
+        adminPassword = req.POST['admin-password']
+        try:
+            adminUser = User.objects.get(username=adminName)
+            adminToken = Token.objects.get(user=adminUser)
+            myUser = auth.authenticate(username=adminName, password=adminPassword)
+            if myUser is not None:
+                req.session['adminId'] = adminUser.username
+                auth.login(req, myUser)
+                return render(req, 'adminHome.html')
+            else:
+                context = {'msg' : 'Invalid credential...'}
+                print('Invalid credential...')
+                return render(req, 'admin.html', context)
+        except:
+            context = {'msg' : 'You are not registered admin..'}
+            print('You are not registered admin..')
+            return render(req, 'admin.html', context)
+    try:
+        if req.session['adminId']:
+            return render(req, 'adminHome.html')
+    except:
+        return HttpResponse("Your session is expire. please Login again")
+
+def adminLogout(req):
+    try:
+        del req.session['adminId']
+        auth.logout(req)
+    except:
+        return HttpResponse("Your session expire.")
+    return render(req, "admin.html")
+
+def index(req):
+    if req.method == "POST":
         username = req.POST['username']
         password = req.POST['password']
-        print(username,password + " is Registered")
-        print("hi")
-        return redirect('/client/index')
+        try:
+            user = User.objects.get(username=username)
+            token = Token.objects.get(user=user)
+            myuser = auth.authenticate(username=username, password=password)
+            if myuser is not None:
+                req.session['userId'] = user.username
+                auth.login(req, myuser)
+                return render(req, 'home.html')
+            else:
+                context = {'msg' : 'Invalid credential...'}
+                return render(req, 'login.html', context)
+        except:
+            context = {'msg' : 'You are not registered user..'}
+            return render(req, 'shop/login.html', context)
     else:
-        return render(req, 'Regist.html')
-
-# from django.shortcuts import render,HttpResponse,redirect
-# from rest_framework import viewsets
-# from django.contrib import auth
-# from rest_framework.authentication import TokenAuthentication
-# from rest_framework.authtoken.models import Token
-# from rest_framework.permissions import IsAuthenticated
-# from django.contrib.auth.models import User
-# from .models import Profile, ShippingAddress, Product, Cart, Order
-# from django.views.generic.list import ListView
-# from django.views.generic.base import TemplateView
-# from django.views.generic.edit import FormView
-# from .forms import Edit_Profile, prof, ship
-# from django.contrib.auth.decorators import login_required
-# import smtplib
-
-# def index(request):
-# 	return render(request, 'shop/index.html')
-
-
-# def signin(request):
-# 	if request.method == "POST":
-# 		username = request.POST['name']
-# 		password = request.POST['pass']
-# 		try:
-# 			user = User.objects.get(username=username)
-# 			token = Token.objects.get(user=user)
-# 			myuser = auth.authenticate(username=username, password=password)
-# 			if myuser is not None:
-# 				auth.login(request, myuser)
-# 				return render(request, 'shop/index.html')
-# 			else:
-# 				context = {'msg' : 'Invalid credential...'}
-# 				return render(request, 'shop/login.html', context)
-# 		except:
-# 			context = {'msg' : 'You are not registered user..'}
-# 			return render(request, 'shop/login.html', context)
-# 	else:
-# 		return render(request, 'shop/login.html')
+        return render(req, 'shop/login.html')
