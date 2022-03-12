@@ -9,6 +9,7 @@ def index(req):
         username = req.POST['username']
         password = req.POST['password']
         print(username,password + " is Registered")
+        print("hi")
         return redirect('/client/index')
     else:
         return render(req, 'Regist.html')
