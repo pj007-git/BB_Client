@@ -1,0 +1,30 @@
+
+<html>
+    <head>
+        <title>Admin-SignIn</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>    
+    <body>
+        <section class="container text-center">
+            <h2>Prototype</h2>
+            <!-- Trigger the modal with a button -->
+            <a href="/client/verify-super">Admin Register</a>
+            <form method="post" action="client/admin-home">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">username</label>
+                        <input type="text" class="form-cntrol" name="admin-name" id="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">password</label>
+                        <input type="password" class="form-cntrol" name="admin-password" id="password">
+                </div>
+                <button type="submit" class="btn btn-primary">sign-in</button>
+            </form>
+        </section>
+    </body>
+</html>
