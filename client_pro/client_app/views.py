@@ -43,7 +43,7 @@ def adminLogout(req):
         auth.logout(req)
     except:
         return HttpResponse("Your session expire.")
-    return render(req, "admin.html")
+    return redirect('/client/admin')
 
 def index(req):
     if req.method == "POST":
@@ -64,4 +64,32 @@ def index(req):
             context = {'msg' : 'You are not registered user..'}
             return render(req, 'shop/login.html', context)
     else:
-        return render(req, 'shop/login.html')
+        return render(req, 'index.html')
+
+def adminRegister(req):
+    return render(req, 'adminRegister.html')
+
+def verifySuperAdmin(req):
+    if req.method == 'POST':
+        username = req.POST['super-name']
+        password = req.POST['super-password']
+        try:
+            user = User.objects.get(username=username)
+            token = Token.objects.get(user=user)
+            myuser = auth.authenticate(username=username, password=password)
+            if myuser is not None:
+                role = userDetails.objects.get(user=user)
+                if role.roles.role_id == '101':
+                    return redirect('/client/admin-register')
+                context = {'msg' : 'not super head'}
+                print(context)
+                return render(req, 'verifySuperAdmin.html', context)
+            else:
+                context = {'msg' : 'Invalid credential...'}
+                print(context)                
+                return render(req, 'verifySuperAdmin.html', context)
+        except:
+            context = {'msg' : 'It is not registered user..'}
+            print(context)
+            return render(req, 'verifySuperAdmin.html', context)
+    return render(req, 'verifySuperAdmin.html')

@@ -11,12 +11,16 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 	if created:
 		Token.objects.create(user=instance)
 
-class userDetails(models.Model):
-    roles = models.CharField(max_length=70, default='')
-    deleted = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class roles(models.Model):
+    role_id = models.CharField(max_length=10)
+    role_name = models.CharField(max_length=70, default='')
 
+    def __str__(self) -> str:
+        return self.role_id
+
+class userDetails(models.Model):
+    roles = models.ForeignKey(roles, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.user.username
-
