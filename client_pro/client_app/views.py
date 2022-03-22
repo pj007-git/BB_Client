@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import userDetails
+from .models import userDetails, roles
 
 # Create your views here.
 def clientAdmin(req):
@@ -22,15 +22,16 @@ def adminHome(req):
             if myUser is not None:
                 req.session['adminId'] = adminUser.username
                 auth.login(req, myUser)
-                return render(req, 'adminHome.html')
+                role = userDetails.objects.get(user=adminUser)
+                return render(req, 'adminHome.html', {'username': adminName, 'role': role})
             else:
                 context = {'msg' : 'Invalid credential...'}
                 print('Invalid credential...')
-                return render(req, 'admin.html', context)
+                return render(req, 'index.html', context)
         except:
             context = {'msg' : 'You are not registered admin..'}
             print('You are not registered admin..')
-            return render(req, 'admin.html', context)
+            return render(req, 'index.html', context)
     try:
         if req.session['adminId']:
             return render(req, 'adminHome.html')
@@ -43,7 +44,7 @@ def adminLogout(req):
         auth.logout(req)
     except:
         return HttpResponse("Your session expire.")
-    return redirect('/client/admin')
+    return redirect('/client/index')
 
 def index(req):
     if req.method == "POST":
@@ -67,6 +68,17 @@ def index(req):
         return render(req, 'index.html')
 
 def adminRegister(req):
+    if req.method == 'POST':
+        username = req.POST['username']
+        password = req.POST['pass']
+        email = req.POST['email']
+        _roles = req.POST['roles']
+        _user = User.objects.create_user(username,email,password)
+        _user.save()
+        roleDoc = roles.objects.filter(role_id=_roles)
+        details = userDetails(user=_user, roles=roleDoc[0])
+        details.save()
+        return render(req, "adminRegister.html")
     return render(req, 'adminRegister.html')
 
 def verifySuperAdmin(req):
