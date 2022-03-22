@@ -23,7 +23,7 @@ def adminHome(req):
                 req.session['adminId'] = adminUser.username
                 auth.login(req, myUser)
                 role = userDetails.objects.get(user=adminUser)
-                return render(req, 'adminHome.html', {'username': adminName, 'role': role]})
+                return render(req, 'adminHome.html', {'username': adminName, 'role': role})
             else:
                 context = {'msg' : 'Invalid credential...'}
                 print('Invalid credential...')
